@@ -66,7 +66,7 @@ class Rank(data: ConfigurationSection) : LootGenerator(data) {
                         // 执行动作
                         ActionManager.runAction(
                             player,
-                            lootAction[index],
+                            guaranteeAction,
                             map,
                             map
                         )
