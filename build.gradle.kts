@@ -28,7 +28,7 @@ taboolib {
         "platform-bukkit",
     )
     classifier = null
-    version = "6.0.11-18"
+    version = "6.0.11-31"
 }
 
 configurations{

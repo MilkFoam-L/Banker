@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import pers.neige.banker.loot.MobLoot
@@ -79,7 +80,7 @@ abstract class MythicMobsHooker {
             attacker = attacker.shooter as? Entity
         }
 
-        if (attacker == null) return
+        if (attacker == null || attacker !is Player) return
 
         // 获取当前MM怪物的伤害数据
         val mobData = data.computeIfAbsent(defender.uniqueId) { ConcurrentHashMap() }
