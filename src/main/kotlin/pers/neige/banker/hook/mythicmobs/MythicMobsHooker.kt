@@ -136,6 +136,7 @@ abstract class MythicMobsHooker {
             entity.customName?.let {
                 map["mobCustomName"] = it
             }
+            map["playerAmount"] = damageData.size.toString()
         }
         // 发送战利品
         mobConfig?.run(damageData, sortedDamageData, totalDamage, params)
