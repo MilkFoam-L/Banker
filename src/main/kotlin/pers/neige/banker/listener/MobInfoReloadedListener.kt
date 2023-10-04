@@ -8,9 +8,10 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.HashMap
+import java.util.concurrent.ConcurrentHashMap
 
 object MobInfoReloadedListener {
-    val mobConfigs = HashMap<String, MobLoot>()
+    val mobConfigs = ConcurrentHashMap<String, MobLoot>()
 
     @SubscribeEvent(priority = taboolib.common.platform.event.EventPriority.MONITOR, ignoreCancelled = true)
     fun listener(event: MobInfoReloadedEvent) {
@@ -20,11 +21,7 @@ object MobInfoReloadedListener {
     @Awake(LifeCycle.ACTIVE)
     fun loadMobConfigs() {
         // 遍历怪物配置
-        mythicMobsHooker?.mobInfos?.entries?.forEach { entry ->
-            // 获取怪物ID
-            val mythicId = entry.key
-            // 获取怪物配置
-            val config = entry.value
+        mythicMobsHooker?.mobInfos?.forEach { (mythicId, config) ->
             // 获取Banker配置项
             val banker = config.getConfigurationSection("Banker")
             // 当Banker配置项存在时进行进一步操作

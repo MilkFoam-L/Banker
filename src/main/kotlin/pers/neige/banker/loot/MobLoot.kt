@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
 import pers.neige.banker.manager.ConfigManager
 import pers.neige.banker.manager.LootManager.parseGenerator
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 怪物战利品配置
@@ -12,7 +13,7 @@ import pers.neige.banker.manager.LootManager.parseGenerator
  * @constructor 解析一系列单独的战利品配置, 组合即为怪物对应的战利品配置
  */
 class MobLoot(configs: Map<String, ConfigurationSection>) {
-    private val loots = HashMap<String, LootGenerator>()
+    private val loots = ConcurrentHashMap<String, LootGenerator>()
 
     init {
         configs.forEach { (id, config) ->

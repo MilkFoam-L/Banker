@@ -10,6 +10,7 @@ import pers.neige.banker.listener.EntityDamageByEntityListener.data
 import pers.neige.banker.listener.MobInfoReloadedListener.mobConfigs
 import pers.neige.banker.manager.ConfigManager
 import pers.neige.neigeitems.manager.HookerManager.mythicMobsHooker
+import pers.neige.neigeitems.utils.ListenerUtils
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
@@ -25,21 +26,21 @@ object MythicMobDeathListener {
 
     @Awake(LifeCycle.ACTIVE)
     fun register() {
-        Bukkit.getPluginManager().registerEvent(
+        ListenerUtils.registerListener(
             mythicMobsHooker!!.deathEventClass,
-            object : Listener {},
             EventPriority.MONITOR,
-            { _, event ->
-                submit(async = true) {
+            plugin,
+        ) { event ->
+            if (mythicMobsHooker!!.deathEventClass.isAssignableFrom(event.javaClass)) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
                     deathEvent(
                         mythicMobsHooker!!.getEntity(event)!!,
                         mythicMobsHooker!!.getInternalName(event)!!,
                         mythicMobsHooker!!.getMobLevel(event)!!.roundToInt(),
                     )
-                }
-            },
-            plugin
-        )
+                })
+            }
+        }
     }
 
     private fun deathEvent(
