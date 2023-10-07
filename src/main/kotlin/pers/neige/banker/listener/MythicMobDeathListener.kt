@@ -31,15 +31,13 @@ object MythicMobDeathListener {
             EventPriority.MONITOR,
             plugin,
         ) { event ->
-            if (mythicMobsHooker!!.deathEventClass.isAssignableFrom(event.javaClass)) {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
-                    deathEvent(
-                        mythicMobsHooker!!.getEntity(event)!!,
-                        mythicMobsHooker!!.getInternalName(event)!!,
-                        mythicMobsHooker!!.getMobLevel(event)!!.roundToInt(),
-                    )
-                })
-            }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
+                deathEvent(
+                    mythicMobsHooker!!.getEntity(event)!!,
+                    mythicMobsHooker!!.getInternalName(event)!!,
+                    mythicMobsHooker!!.getMobLevel(event)!!.roundToInt(),
+                )
+            })
         }
     }
 
