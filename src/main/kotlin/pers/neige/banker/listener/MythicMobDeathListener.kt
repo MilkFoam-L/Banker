@@ -80,6 +80,7 @@ object MythicMobDeathListener {
             map["mobLocationPitch"] = df2.format(location.pitch)
             map["mobWorld"] = entity.world.name
             map["mobName"] = entity.name
+            map["mobUUID"] = entity.uniqueId.toString()
             entity.customName?.let {
                 map["mobCustomName"] = it
             }
