@@ -1,16 +1,16 @@
 package pers.neige.banker.manager
 
+import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
-import pers.neige.banker.Banker.plugin
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
-import taboolib.common.platform.Platform
-import taboolib.module.metrics.Metrics
-import taboolib.platform.BukkitPlugin
+import org.bukkit.plugin.java.JavaPlugin
+import pers.neige.banker.Banker
+import pers.neige.neigeitems.annotation.Awake
+import pers.neige.neigeitems.utils.ConfigUtils.saveResourceNotWarn
+import pers.neige.neigeitems.utils.FileUtils.createDirectory
 import java.io.*
 
 /**
@@ -21,7 +21,7 @@ object ConfigManager {
      * 获取默认Config
      */
     private val originConfig: FileConfiguration =
-        plugin.getResource("config.yml")?.let {
+        Banker.getInstance().getResource("config.yml")?.let {
             val reader = InputStreamReader(it, "UTF-8")
             val config = YamlConfiguration.loadConfiguration(reader)
             reader.close()
@@ -31,7 +31,7 @@ object ConfigManager {
     /**
      * 获取配置文件
      */
-    val config get() = plugin.config
+    val config get() = Banker.getInstance().config
 
     /**
      * 是否记录全部MM怪物的伤害统计信息(包含未配置死后执行指令的怪物)
@@ -75,40 +75,40 @@ object ConfigManager {
     /**
      * 加载默认配置文件
      */
-    @Awake(LifeCycle.INIT)
+    @Awake(lifeCycle = Awake.LifeCycle.ENABLE)
     fun saveResource() {
-        plugin.saveResourceNotWarn("Mobs${File.separator}Banker${File.separator}ExampleMobs.yml", Bukkit.getPluginManager().getPlugin("MythicMobs"))
-        plugin.saveDefaultConfig()
+        Banker.getInstance().saveResourceNotWarn("Mobs${File.separator}Banker${File.separator}ExampleMobs.yml", Bukkit.getPluginManager().getPlugin("MythicMobs"))
+        Banker.getInstance().saveDefaultConfig()
         // 加载bstats
-        Metrics(18146, plugin.description.version, Platform.BUKKIT)
+        Metrics(Banker.getInstance(), 18146)
     }
 
     /**
      * 对当前Config查缺补漏
      */
-    @Awake(LifeCycle.LOAD)
+    @Awake(lifeCycle = Awake.LifeCycle.ENABLE)
     fun loadConfig() {
         originConfig.getKeys(true).forEach { key ->
-            if (!plugin.config.contains(key)) {
-                plugin.config.set(key, originConfig.get(key))
+            if (!Banker.getInstance().config.contains(key)) {
+                Banker.getInstance().config.set(key, originConfig.get(key))
             } else {
                 val completeValue = originConfig.get(key)
-                val value = plugin.config.get(key)
+                val value = Banker.getInstance().config.get(key)
                 if (completeValue is ConfigurationSection && value !is ConfigurationSection) {
-                    plugin.config.set(key, completeValue)
+                    Banker.getInstance().config.set(key, completeValue)
                 } else {
-                    plugin.config.set(key, value)
+                    Banker.getInstance().config.set(key, value)
                 }
             }
         }
-        plugin.saveConfig()
+        Banker.getInstance().saveConfig()
     }
 
     /**
      * 重载配置管理器
      */
     fun reload() {
-        plugin.reloadConfig()
+        Banker.getInstance().reloadConfig()
         loadConfig()
 
         logAll = config.getBoolean("LogAll")
@@ -122,25 +122,18 @@ object ConfigManager {
         reloaded = config.getString("Messages.Reloaded")
     }
 
-    private fun BukkitPlugin.saveResourceNotWarn(resourcePath: String, targetPlugin: Plugin? = this) {
-        this.getResource(resourcePath.replace('\\', '/'))?.let { inputStream ->
+    private fun JavaPlugin.saveResourceNotWarn(resourcePath: String, targetPlugin: Plugin? = this) {
+        this.getResource(resourcePath.replace('\\', '/'))?.use { inputStream ->
             val outFile = File((targetPlugin ?: this).dataFolder, resourcePath)
-            val lastIndex: Int = resourcePath.lastIndexOf(File.separator)
-            val outDir = File((targetPlugin ?: this).dataFolder, resourcePath.substring(0, if (lastIndex >= 0) lastIndex else 0))
-            if (!outDir.exists()) {
-                outDir.mkdirs()
-            }
+            outFile.parentFile.createDirectory()
             if (!outFile.exists()) {
-                try {
+                FileOutputStream(outFile).use { fileOutputStream ->
                     var len: Int
-                    val fileOutputStream = FileOutputStream(outFile)
                     val buf = ByteArray(1024)
                     while (inputStream.read(buf).also { len = it } > 0) {
                         (fileOutputStream as OutputStream).write(buf, 0, len)
                     }
-                    fileOutputStream.close()
-                    inputStream.close()
-                } catch (ex: IOException) {}
+                }
             }
         }
     }

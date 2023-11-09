@@ -1,7 +1,6 @@
 package pers.neige.banker.manager
 
 import org.bukkit.configuration.ConfigurationSection
-import org.reflections.Reflections
 import pers.neige.banker.loot.LootGenerator
 import java.lang.reflect.Constructor
 import java.util.*
@@ -31,15 +30,4 @@ object LootManager {
     }
 
     val lootGenerators = ConcurrentHashMap<String, Constructor<out LootGenerator>>()
-
-    init {
-        //获取该路径下所有类
-        val reflections = Reflections("pers.neige.banker.loot.impl")
-        //获取继承了LootGenerator的所有类
-        val classSet: Set<Class<out LootGenerator>> = reflections.getSubTypesOf(LootGenerator::class.java)
-        // 添加生成器
-        for (clazz in classSet) {
-            addGenerator(clazz.simpleName.uppercase(Locale.getDefault()), clazz)
-        }
-    }
 }

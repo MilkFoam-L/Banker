@@ -1,24 +1,23 @@
 package pers.neige.banker.listener
 
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.event.EventPriority
 import pers.neige.banker.loot.MobLoot
+import pers.neige.neigeitems.annotation.Awake
+import pers.neige.neigeitems.annotation.Listener
 import pers.neige.neigeitems.event.MobInfoReloadedEvent
 import pers.neige.neigeitems.manager.HookerManager.mythicMobsHooker
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
-import taboolib.common.platform.event.SubscribeEvent
-import java.util.HashMap
 import java.util.concurrent.ConcurrentHashMap
 
 object MobInfoReloadedListener {
     val mobConfigs = ConcurrentHashMap<String, MobLoot>()
 
-    @SubscribeEvent(priority = taboolib.common.platform.event.EventPriority.MONITOR, ignoreCancelled = true)
+    @Listener(eventPriority = EventPriority.MONITOR)
     fun listener(event: MobInfoReloadedEvent) {
         loadMobConfigs()
     }
 
-    @Awake(LifeCycle.ACTIVE)
+    @Awake(lifeCycle = Awake.LifeCycle.ACTIVE)
     fun loadMobConfigs() {
         // 遍历怪物配置
         mythicMobsHooker?.mobInfos?.forEach { (mythicId, config) ->

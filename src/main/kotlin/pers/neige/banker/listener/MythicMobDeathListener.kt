@@ -1,43 +1,40 @@
 package pers.neige.banker.listener
 
+import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
-import pers.neige.banker.Banker.plugin
+import pers.neige.banker.Banker
 import pers.neige.banker.listener.EntityDamageByEntityListener.data
 import pers.neige.banker.listener.MobInfoReloadedListener.mobConfigs
 import pers.neige.banker.manager.ConfigManager
+import pers.neige.neigeitems.annotation.Awake
+import pers.neige.neigeitems.manager.HookerManager.hoverText
 import pers.neige.neigeitems.manager.HookerManager.mythicMobsHooker
 import pers.neige.neigeitems.utils.ListenerUtils
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
-import taboolib.common.platform.function.submit
-import taboolib.module.chat.RawMessage
-import taboolib.platform.BukkitAdapter
+import pers.neige.neigeitems.utils.PlayerUtils.sendMessage
+import pers.neige.neigeitems.utils.SchedulerUtils.async
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 object MythicMobDeathListener {
-    private val bukkitAdapter = BukkitAdapter()
-
     private val df2 = DecimalFormat("#0.00")
 
-    @Awake(LifeCycle.ACTIVE)
+    @Awake(lifeCycle = Awake.LifeCycle.ACTIVE)
     fun register() {
         ListenerUtils.registerListener(
             mythicMobsHooker!!.deathEventClass,
             EventPriority.MONITOR,
-            plugin,
+            Banker.getInstance(),
         ) { event ->
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
+            async(Banker.getInstance()) {
                 deathEvent(
                     mythicMobsHooker!!.getEntity(event)!!,
                     mythicMobsHooker!!.getInternalName(event)!!,
                     mythicMobsHooker!!.getMobLevel(event)!!.roundToInt(),
                 )
-            })
+            }
         }
     }
 
@@ -98,14 +95,14 @@ object MythicMobDeathListener {
         totalDamage: Double
     ) {
         // 构建信息
-        val finalMessage = RawMessage()
+        val finalMessage = ComponentBuilder()
         // 将待组合文本纳入数组
         val deathMessageArray = ConfigManager.deathMessage!!
             .replace("{monster}", activeMobName)
             .split("{damagemessage}")
 
         // 开始构建伤害统计Json
-        val hoverMessage = RawMessage()
+        val hoverMessage = ComponentBuilder()
         hoverMessage.append(ConfigManager.damageMessageString!!)
 
         val hoverText = StringBuilder()
@@ -125,7 +122,7 @@ object MythicMobDeathListener {
                     .replace("{ranking}", (index + 1).toString())
                     .replace("{player}", entry.key)
                     .replace("{damage}", df2.format(entry.value))
-                    .replace("{percentage}", df2.format(entry.value*100/totalDamage) + "%") + "\n"
+                    .replace("{percentage}", df2.format(entry.value * 100 / totalDamage) + "%") + "\n"
             )
         }
         // 加入伤害统计后缀
@@ -142,19 +139,14 @@ object MythicMobDeathListener {
         deathMessageArray.forEachIndexed { index, message ->
             finalMessage.append(message)
             if ((index + 1) != deathMessageArray.size) {
-                finalMessage.append(hoverMessage)
+                finalMessage.append(hoverMessage.create())
             }
         }
 
         // 遍历玩家ID
         sortedDamageData.forEach { entry ->
-            // 获取玩家
-            val attacker = Bukkit.getPlayer(entry.key)
-            // 如果玩家在线
-            if (attacker != null) {
-                // 发送信息
-                finalMessage.sendTo(bukkitAdapter.adaptCommandSender(attacker))
-            }
+            // 获取玩家并发送消息
+            Bukkit.getPlayer(entry.key)?.sendMessage(finalMessage)
         }
     }
 }

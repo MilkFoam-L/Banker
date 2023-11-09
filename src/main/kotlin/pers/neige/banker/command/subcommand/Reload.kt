@@ -2,18 +2,11 @@ package pers.neige.banker.command.subcommand
 
 import org.bukkit.command.CommandSender
 import pers.neige.banker.manager.ConfigManager
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submit
+import pers.neige.neigeitems.utils.SchedulerUtils.async
 
 object Reload {
-    val reload = subCommand {
-        execute<CommandSender> { sender, _, _ ->
-            reloadCommand(sender)
-        }
-    }
-
-    private fun reloadCommand(sender: CommandSender) {
-        submit(async = true) {
+    fun reloadCommand(sender: CommandSender) {
+        async {
             // 准备重载
             ConfigManager.reload()
             sender.sendMessage(ConfigManager.reloaded)

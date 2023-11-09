@@ -1,0 +1,14 @@
+name: Banker
+main: pers.neige.banker.Banker
+version: ${version}
+
+authors:
+  - 'Neige'
+
+depend:
+  - 'NeigeItems'
+  - 'MythicMobs'
+softdepend:
+  - 'PlaceholderAPI'
+
+api-version: 1.13

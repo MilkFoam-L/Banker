@@ -4,20 +4,17 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
+import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 import pers.neige.banker.manager.ConfigManager
-import pers.neige.neigeitems.item.ItemDurability
-import pers.neige.neigeitems.utils.ItemUtils.isNiItem
-import taboolib.common.platform.event.EventPriority
-import taboolib.common.platform.event.SubscribeEvent
+import pers.neige.neigeitems.annotation.Listener
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 object EntityDamageByEntityListener {
     val data = ConcurrentHashMap<UUID, ConcurrentHashMap<String, Double>>()
 
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @Listener(eventPriority = EventPriority.MONITOR)
     fun listener(event: EntityDamageByEntityEvent) {
         // 获取收到伤害的实体
         val defender = event.entity
