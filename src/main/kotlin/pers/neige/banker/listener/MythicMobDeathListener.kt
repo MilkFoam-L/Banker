@@ -102,14 +102,14 @@ object MythicMobDeathListener {
         totalDamage: Double
     ) {
         // 构建信息
-        val finalMessage = ComponentBuilder()
+        val finalMessage = ComponentBuilder("")
         // 将待组合文本纳入数组
         val deathMessageArray = ConfigManager.deathMessage!!
             .replace("{monster}", activeMobName)
             .split("{damagemessage}")
 
         // 开始构建伤害统计Json
-        val hoverMessage = ComponentBuilder()
+        val hoverMessage = ComponentBuilder("")
         hoverMessage.append(ConfigManager.damageMessageString!!)
 
         val hoverText = StringBuilder()
