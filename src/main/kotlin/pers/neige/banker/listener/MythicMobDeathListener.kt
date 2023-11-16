@@ -4,6 +4,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import pers.neige.banker.Banker
 import pers.neige.banker.listener.EntityDamageByEntityListener.data
@@ -33,6 +34,7 @@ object MythicMobDeathListener {
                     mythicMobsHooker!!.getEntity(event)!!,
                     mythicMobsHooker!!.getInternalName(event)!!,
                     mythicMobsHooker!!.getMobLevel(event)!!.roundToInt(),
+                    event
                 )
             }
         }
@@ -41,7 +43,8 @@ object MythicMobDeathListener {
     private fun deathEvent(
         entity: Entity,
         mythicId: String,
-        mobLevel: Int
+        mobLevel: Int,
+        event: Event
     ) {
         val mobConfig = mobConfigs[mythicId]
 
@@ -63,7 +66,7 @@ object MythicMobDeathListener {
         // 对每个玩家发送伤害统计信息
         sendStatisticsMessage(sortedDamageData, entity.name, totalDamage)
         // 构建怪物参数
-        val params = mutableMapOf<String, String>().also { map ->
+        val params = mutableMapOf<String, Any?>().also { map ->
             if (entity is LivingEntity) {
                 map["mobMaxHealth"] = df2.format(entity.maxHealth)
             }
@@ -82,6 +85,10 @@ object MythicMobDeathListener {
                 map["mobCustomName"] = it
             }
             map["playerAmount"] = damageData.size.toString()
+            map["damageData"] = damageData
+            map["sortedDamageData"] = sortedDamageData
+            map["entity"] = entity
+            map["event"] = event
         }
         // 发送战利品
         mobConfig?.run(damageData, sortedDamageData, totalDamage, params)

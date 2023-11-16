@@ -25,14 +25,14 @@ class MultiPack(data: ConfigurationSection) : LootGenerator(data) {
         damageData: Map<String, Double>,
         sortedDamageData: List<Map.Entry<String, Double>>,
         totalDamage: Double,
-        params: MutableMap<String, String>?
+        params: MutableMap<String, Any?>?
     ) {
         // 选取玩家ID
         val names = SamplingUtils.aExpj(damageData, min(damageData.size, amount))
         for (name in names) {
             // 获取在线玩家, 玩家不在线则停止执行
             Bukkit.getPlayer(name)?.let { player ->
-                (params?.toMutableMap<String, Any?>() ?: mutableMapOf<String, Any?>()).also { map ->
+                (params?.toMutableMap() ?: mutableMapOf()).also { map ->
                     map["damage"] = "%.2f".format(damageData[name])
                     map["totalDamage"] = "%.2f".format(totalDamage)
                     // 执行动作
@@ -52,7 +52,7 @@ class MultiPack(data: ConfigurationSection) : LootGenerator(data) {
             // 获取在线玩家, 玩家不在线则停止执行
             Bukkit.getPlayer(name).let { player ->
                 if (player != null) {
-                    (params?.toMutableMap<String, Any?>() ?: mutableMapOf()).also { map ->
+                    (params?.toMutableMap() ?: mutableMapOf()).also { map ->
                         map["damage"] = "%.2f".format(damageData[name])
                         map["totalDamage"] = "%.2f".format(totalDamage)
                         // 执行动作

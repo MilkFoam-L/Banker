@@ -24,6 +24,6 @@ abstract class LootGenerator(private val data: ConfigurationSection) {
         damageData: Map<String, Double>,
         sortedDamageData: List<Map.Entry<String, Double>>,
         totalDamage: Double,
-        params: MutableMap<String, String>? = null
+        params: MutableMap<String, Any?>? = null
     )
 }

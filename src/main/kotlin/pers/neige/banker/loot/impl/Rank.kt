@@ -24,7 +24,7 @@ class Rank(data: ConfigurationSection) : LootGenerator(data) {
         damageData: Map<String, Double>,
         sortedDamageData: List<Map.Entry<String, Double>>,
         totalDamage: Double,
-        params: MutableMap<String, String>?
+        params: MutableMap<String, Any?>?
     ) {
         val length = min((lootAction).size, sortedDamageData.size)
         // 遍历每个战利品配置
@@ -34,7 +34,7 @@ class Rank(data: ConfigurationSection) : LootGenerator(data) {
             // 获取在线玩家, 玩家不在线则停止执行
             val player = Bukkit.getPlayer(name) ?: continue
             // 执行动作
-            (params?.toMutableMap<String, Any?>() ?: mutableMapOf()).also { map ->
+            (params?.toMutableMap() ?: mutableMapOf()).also { map ->
                 map["rank"] = (index + 1).toString()
                 map["damage"] = "%.2f".format(damageData[name])
                 map["totalDamage"] = "%.2f".format(totalDamage)
@@ -58,7 +58,7 @@ class Rank(data: ConfigurationSection) : LootGenerator(data) {
                     val name = sortedDamageData[index].key
                     // 获取在线玩家, 玩家不在线则停止执行
                     val player = Bukkit.getPlayer(name) ?: continue
-                    (params?.toMutableMap<String, Any?>() ?: mutableMapOf()).also { map ->
+                    (params?.toMutableMap() ?: mutableMapOf()).also { map ->
                         map["rank"] = (index + 1).toString()
                         map["damage"] = "%.2f".format(damageData[name])
                         map["totalDamage"] = "%.2f".format(totalDamage)

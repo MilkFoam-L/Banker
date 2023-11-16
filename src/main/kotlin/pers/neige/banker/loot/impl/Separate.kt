@@ -24,7 +24,7 @@ class Separate(data: ConfigurationSection) : LootGenerator(data) {
         damageData: Map<String, Double>,
         sortedDamageData: List<Map.Entry<String, Double>>,
         totalDamage: Double,
-        params: MutableMap<String, String>?
+        params: MutableMap<String, Any?>?
     ) {
         val names = damageData.keys.toHashSet()
         // 遍历每个战利品配置
@@ -34,7 +34,7 @@ class Separate(data: ConfigurationSection) : LootGenerator(data) {
                 names.remove(name)
                 // 获取在线玩家, 玩家不在线则停止执行
                 Bukkit.getPlayer(name)?.let { player ->
-                    (params?.toMutableMap<String, Any?>() ?: mutableMapOf()).also { map ->
+                    (params?.toMutableMap() ?: mutableMapOf()).also { map ->
                         map["damage"] = "%.2f".format(damageData[name])
                         map["totalDamage"] = "%.2f".format(totalDamage)
                         map["lootAmount"] = lootAction.size
