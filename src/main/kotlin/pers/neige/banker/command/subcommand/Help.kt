@@ -41,14 +41,14 @@ object Help {
                     .replace("{command}", commandsSection.getString("$command.command") ?: "")
                     .replace("{description}", commandsSection.getString("$command.description") ?: ""))
             }
-            val prevRaw = ComponentBuilder()
+            val prevRaw = ComponentBuilder("")
                 .append(ConfigManager.config.getString("Help.prev")?:"")
             if (realPage != 1) {
                 prevRaw
                     .hoverText((ConfigManager.config.getString("Help.prev")?:"") + ": " + (realPage-1).toString())
                     .runCommand("/banker help ${realPage-1}")
             }
-            val nextRaw = ComponentBuilder()
+            val nextRaw = ComponentBuilder("")
                 .append(ConfigManager.config.getString("Help.next")?:"")
             if (realPage != pageAmount) {
                 nextRaw.hoverText((ConfigManager.config.getString("Help.next")?:"") + ": " + (realPage+1))
@@ -57,7 +57,7 @@ object Help {
             var listSuffixMessage = (ConfigManager.config.getString("Help.suffix")?:"")
                 .replace("{current}", realPage.toString())
                 .replace("{total}", pageAmount.toString())
-            val listMessage = ComponentBuilder()
+            val listMessage = ComponentBuilder("")
             if (sender is Player) {
                 listSuffixMessage = listSuffixMessage
                     .replace("{prev}", "!@#$%{prev}!@#$%")
