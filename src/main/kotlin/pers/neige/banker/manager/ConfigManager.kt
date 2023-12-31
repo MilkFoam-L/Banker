@@ -39,6 +39,11 @@ object ConfigManager {
     var logAll = config.getBoolean("LogAll")
 
     /**
+     * 伤害排名信息的显示数量限制, -1代表不限制
+     */
+    var rankLimit = config.getInt("RankLimit")
+
+    /**
      * 怪物死亡提示文本
      */
     var deathMessage = config.getString("Messages.Death")
@@ -57,6 +62,11 @@ object ConfigManager {
      * 怪物伤害统计
      */
     var damageMessage = config.getString("Messages.DamageInfo")
+
+    /**
+     * 排名数量超过限制时添加的省略文本
+     */
+    var damageEllipsis = config.getStringList("Messages.DamageEllipsis")
 
     /**
      * 怪物伤害统计后缀, 设置为 DamagePrefix: [] 代表不发送
@@ -112,10 +122,12 @@ object ConfigManager {
         loadConfig()
 
         logAll = config.getBoolean("LogAll")
+        rankLimit = config.getInt("RankLimit")
         deathMessage = config.getString("Messages.Death")
         damageMessageString = config.getString("Messages.Damage")
         damageMessagePrefix = config.getStringList("Messages.DamagePrefix")
         damageMessage = config.getString("Messages.DamageInfo")
+        damageEllipsis = config.getStringList("Messages.DamageEllipsis")
         damageMessageSuffix = config.getStringList("Messages.DamageSuffix")
         lootTypeError = config.getString("Messages.LootTypeError")
         invalidPlugin = config.getString("Messages.InvalidPlugin")

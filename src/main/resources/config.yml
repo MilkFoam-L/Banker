@@ -1,6 +1,9 @@
 # 是否记录全部MM怪物的伤害统计信息(包含未配置死后执行指令的怪物)
 LogAll: false
 
+# 伤害排名信息的显示数量限制, -1代表不限制
+RankLimit: -1
+
 Messages:
   # 怪物死亡提示文本
   Death: "§f§l§k|§r §c已击杀 {monster}, 讨伐奖励已发放! {damagemessage}"
@@ -12,6 +15,9 @@ Messages:
     - "§f§m  §f§l|  §7讨伐目标 - {monster}"
     - "§f§m  §f§l|  §7累计伤害 - {totaldamage}"
     - "§f§m  §f§l|  §7伤害统计: "
+  # 排名数量超过限制时添加的省略文本
+  DamageEllipsis:
+  - "..."
   # 怪物伤害统计
   DamageInfo: "  §f§l┕§f§m        §r §7{ranking}. {player}: §a{damage} §8({percentage})"
   # 怪物伤害统计后缀, 设置为 DamageSuffix: [] 代表不发送

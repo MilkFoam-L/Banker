@@ -123,7 +123,13 @@ object MythicMobDeathListener {
             )
         }
         // 加入伤害统计排名
-        sortedDamageData.forEachIndexed { index, entry ->
+        val length = if (ConfigManager.rankLimit == -1) {
+            sortedDamageData.size
+        } else {
+            ConfigManager.rankLimit.coerceAtMost(sortedDamageData.size)
+        }
+        for (index in 0 until length) {
+            val entry = sortedDamageData[index]
             hoverText.append(
                 ConfigManager.damageMessage!!
                     .replace("{ranking}", (index + 1).toString())
@@ -131,6 +137,12 @@ object MythicMobDeathListener {
                     .replace("{damage}", df2.format(entry.value))
                     .replace("{percentage}", df2.format(entry.value * 100 / totalDamage) + "%") + "\n"
             )
+        }
+        // 添加省略文本
+        if (ConfigManager.rankLimit != -1 && ConfigManager.rankLimit > sortedDamageData.size) {
+            ConfigManager.damageEllipsis.forEach {
+                hoverText.append(it)
+            }
         }
         // 加入伤害统计后缀
         ConfigManager.damageMessageSuffix.forEachIndexed { index, suffix ->
