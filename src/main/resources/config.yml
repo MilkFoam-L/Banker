@@ -17,7 +17,7 @@ Messages:
     - "§f§m  §f§l|  §7伤害统计: "
   # 排名数量超过限制时添加的省略文本
   DamageEllipsis:
-  - "..."
+  - "               ..."
   # 怪物伤害统计
   DamageInfo: "  §f§l┕§f§m        §r §7{ranking}. {player}: §a{damage} §8({percentage})"
   # 怪物伤害统计后缀, 设置为 DamageSuffix: [] 代表不发送

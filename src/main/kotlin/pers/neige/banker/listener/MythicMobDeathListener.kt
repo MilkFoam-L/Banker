@@ -139,7 +139,7 @@ object MythicMobDeathListener {
             )
         }
         // 添加省略文本
-        if (ConfigManager.rankLimit != -1 && ConfigManager.rankLimit > sortedDamageData.size) {
+        if (length != sortedDamageData.size) {
             ConfigManager.damageEllipsis.forEach {
                 hoverText.append(it)
             }
