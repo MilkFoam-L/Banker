@@ -19,6 +19,7 @@ object MobInfoReloadedListener {
 
     @Awake(lifeCycle = Awake.LifeCycle.ACTIVE)
     fun loadMobConfigs() {
+        val temp = ConcurrentHashMap<String, MobLoot>()
         // 遍历怪物配置
         mythicMobsHooker?.mobInfos?.forEach { (mythicId, config) ->
             // 获取Banker配置项
@@ -40,9 +41,19 @@ object MobInfoReloadedListener {
                 // 如果存在战利品配置
                 if (loots.isNotEmpty()) {
                     // 存储
-                    mobConfigs[mythicId] = MobLoot(loots)
+                    temp[mythicId] = MobLoot(loots)
                 }
             }
+        }
+        val iterator = mobConfigs.iterator()
+        while(iterator.hasNext()) {
+            val entry = iterator.next()
+            if (!temp.containsKey(entry.key)) {
+                iterator.remove()
+            }
+        }
+        temp.forEach { (key, value) ->
+            mobConfigs[key] = value
         }
     }
 }
